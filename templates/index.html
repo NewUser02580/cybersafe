@@ -107,7 +107,6 @@
           <!-- We use name 'password' server-side to detect this form -->
           <input type="password" name="password" placeholder="Enter password to check (won't be stored)" />
           <button type="submit">Check Password</button>
-          <div class="note">We use HaveIBeenPwned's <strong>k-anonymity</strong> API: your full password is never sent to their servers.</div>
         </form>
 
         {% if result %}
@@ -116,15 +115,6 @@
           </div>
         {% endif %}
 
-        {% if details %}
-          <!-- Hide debug by default, remove or toggle in prod -->
-          <div style="margin-top:12px;">
-            <details>
-              <summary style="cursor:pointer;padding:6px 8px;border-radius:8px;background:#f8fafc;border:1px solid #f1f5f9;">View technical details (debug)</summary>
-              <pre class="debug">{{ details | tojson(indent=2) }}</pre>
-            </details>
-          </div>
-        {% endif %}
       </div>
 
       <div class="right">
