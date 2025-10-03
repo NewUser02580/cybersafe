@@ -4,89 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CyberSafe – Link & Password Checker</title>
-  <style>
-    /* Basic reset */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg,#0f172a 0%, #2b6cb0 100%);
-      min-height: 100vh;
-      display:flex; align-items:center; justify-content:center;
-      padding: 32px;
-    }
-
-    .card {
-      width: 720px; max-width: 95%;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 12px 30px rgba(2,6,23,0.45);
-      overflow: hidden;
-    }
-
-    .header {
-      background: linear-gradient(90deg,#1d2671,#c33764);
-      color: #fff;
-      padding: 20px 24px;
-      display:flex; align-items:center; gap:16px;
-    }
-    .logo {
-      background: rgba(255,255,255,0.12);
-      padding:8px; border-radius:8px; font-weight:700;
-    }
-    .title { font-size:1.2rem; font-weight:700; }
-    .subtitle { font-size:0.875rem; opacity:0.9; margin-top:4px; }
-
-    .content { padding: 22px; display:flex; gap:20px; }
-    .left { flex: 1.2; }
-    .right { flex: 0.8; border-left:1px solid #f1f5f9; padding-left:20px; }
-
-    /* Tabs */
-    .tabs { display:flex; gap:8px; margin-bottom:12px; }
-    .tab {
-      padding:8px 12px; border-radius:8px; cursor:pointer;
-      background:#f1f5f9; color:#0f172a; font-weight:600; font-size:0.95rem;
-      border:1px solid #e2e8f0;
-    }
-    .tab.active { background:#1d2671; color:#fff; border-color: transparent; }
-
-    input[type="text"], input[type="password"] {
-      width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6eef8;
-      margin-bottom:10px; font-size:1rem;
-    }
-    button {
-      padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700;
-      background:#1d2671; color:#fff;
-    }
-    button.secondary { background:#6b7280; }
-
-    .result {
-      margin-top:14px; padding:12px; border-radius:10px; font-weight:700;
-    }
-    .safe { background:#e6f9ee; color:#0f5132; border:1px solid #0f5132; }
-    .warn { background:#fff7e6; color:#7a4b00; border:1px solid #7a4b00; }
-    .danger { background:#fdecea; color:#7a1416; border:1px solid #7a1416; }
-
-    .note { font-size:0.875rem; color:#475569; margin-top:10px; }
-
-    pre.debug {
-      background:#0b1220; color:#a8b3c5; padding:10px; border-radius:8px; overflow:auto; font-size:0.85rem;
-    }
-    .footer { padding:10px 20px; font-size:0.85rem; color:#94a3b8; text-align:center; border-top:1px solid #f1f5f9; }
-
-    @media (max-width:720px) {
-      .content { flex-direction:column; }
-      .right { border-left:none; padding-left:0; }
-    }
-  </style>
+  <link rel="stylesheet" href="static\style.css">
 </head>
 <body>
   <div class="card">
     <div class="header">
-      <div class="logo">🔒</div>
-      <div>
-        <div class="title">CyberSafe</div>
-        <div class="subtitle">Check links and passwords before you click or reuse them</div>
-      </div>
+      <div class="logo">🔒 CyberSafe</div>
+      <button id="theme-toggle">🌙</button>
     </div>
 
     <div class="content">
@@ -98,14 +22,18 @@
 
         <!-- Link Form -->
         <form method="POST" id="form-link" style="display:block;">
-          <input type="text" name="url" placeholder="Enter URL (example: https://example.com or 127.0.0.1:4100)" />
+          <input type="text" name="url" placeholder="Enter URL (example: https://example.com)" />
           <button type="submit">Check Link</button>
         </form>
 
         <!-- Password Form -->
         <form method="POST" id="form-pass" style="display:none;">
-          <!-- We use name 'password' server-side to detect this form -->
-          <input type="password" name="password" placeholder="Enter password to check (won't be stored)" />
+          <input type="password" id="password-input" name="password" placeholder="Enter password to check (won't be stored)" />
+          <div id="strength-text" class="strength-text">Type a password...</div>
+          <div class="strength-bar">
+            <div id="strength-fill"></div>
+          </div>
+          <div id="strength-hints" class="note"></div>
           <button type="submit">Check Password</button>
         </form>
 
@@ -114,20 +42,18 @@
             {{ result }}
           </div>
         {% endif %}
-
       </div>
 
       <div class="right">
         <h3>How it works</h3>
-        <p class="note">Link checks combine simple heuristics (HTTP, IP address, suspicious words, private loopback detection) and Google Safe Browsing for public threats (if configured).</p>
+        <p class="note">Link checks combine heuristics (HTTP, IP address, suspicious words) and Google Safe Browsing for known threats.</p>
         <h4 style="margin-top:12px;">Password check</h4>
-        <p class="note">We compute SHA1(password) locally on the server, send only the first 5 characters to HaveIBeenPwned, and compare suffixes. This protects your password privacy.</p>
-
+        <p class="note">We compute SHA1(password), send only 5 chars to HaveIBeenPwned, and compare suffixes. Your password itself is never sent.</p>
         <h4 style="margin-top:12px;">Quick tips</h4>
         <ul style="margin-top:6px;color:#475569;font-size:0.95rem;">
           <li>Never reuse passwords across sites.</li>
-          <li>Prefer passphrases (long + memorable) or a password manager.</li>
-          <li>Be cautious of links with IPs, odd ports, or words like 'verify' or 'secure' in unexpected places.</li>
+          <li>Prefer long passphrases or a password manager.</li>
+          <li>Be cautious of links with IPs, odd ports, or words like 'verify'.</li>
         </ul>
       </div>
     </div>
@@ -141,6 +67,62 @@
       document.getElementById('form-pass').style.display = name === 'pass' ? 'block' : 'none';
       document.getElementById('tab-link').classList.toggle('active', name === 'link');
       document.getElementById('tab-pass').classList.toggle('active', name === 'pass');
+    }
+
+    // Dark/Light theme toggle
+    const toggleBtn = document.getElementById('theme-toggle');
+    const body = document.body;
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      if (body.classList.contains('dark')) {
+        toggleBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        toggleBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark');
+      toggleBtn.textContent = '☀️';
+    }
+
+    // Password Strength Meter with hints
+    const passwordInput = document.getElementById('password-input');
+    const strengthText = document.getElementById('strength-text');
+    const strengthFill = document.getElementById('strength-fill');
+    const strengthHints = document.getElementById('strength-hints');
+
+    if (passwordInput) {
+      passwordInput.addEventListener('input', () => {
+        const val = passwordInput.value;
+        let score = 0;
+        let hints = [];
+
+        if (val.length >= 8) score++; else hints.push("Use at least 8 characters");
+        if (/[A-Z]/.test(val)) score++; else hints.push("Add uppercase letters");
+        if (/[0-9]/.test(val)) score++; else hints.push("Add numbers");
+        if (/[^A-Za-z0-9]/.test(val)) score++; else hints.push("Add special characters");
+
+        let strength = "";
+        let width = (score * 25) + "%";
+
+        switch(score) {
+          case 0: strength = "Type a password..."; break;
+          case 1: strength = "Weak"; break;
+          case 2: strength = "Fair"; break;
+          case 3: strength = "Good"; break;
+          case 4: strength = "Strong"; break;
+        }
+
+        // Gradient fill
+        const gradientColors = ["#dc2626", "#f59e0b", "#eab308", "#16a34a"];
+        strengthFill.style.width = width;
+        strengthFill.style.background = `linear-gradient(to right, ${gradientColors[0]}, ${gradientColors[score-1] || gradientColors[0]})`;
+
+        strengthText.textContent = strength;
+        strengthHints.innerHTML = hints.length ? "Suggestions: " + hints.join(", ") : "Your password looks good!";
+      });
     }
   </script>
 </body>

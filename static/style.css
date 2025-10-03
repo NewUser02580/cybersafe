@@ -1,0 +1,156 @@
+/* Basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg,#f9fafb 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding: 32px;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: linear-gradient(135deg,#0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+}
+
+.card {
+  width: 720px; max-width: 95%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.25);
+  overflow: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark .card { background:#1e293b; color:#f1f5f9; }
+
+.header {
+  background: linear-gradient(90deg,#1d2671,#c33764);
+  color: #fff;
+  padding: 20px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo { font-weight:700; font-size:1.2rem; }
+
+#theme-toggle {
+  background:none; border:none; font-size:1.3rem;
+  cursor:pointer; color:#fff;
+}
+
+.content { padding: 22px; display:flex; gap:20px; }
+.left { flex: 1.2; }
+.right { flex: 0.8; border-left:1px solid #f1f5f9; padding-left:20px; }
+body.dark .right { border-color:#334155; }
+
+/* Tabs */
+.tabs { display:flex; gap:8px; margin-bottom:12px; flex-wrap: wrap; }
+.tab {
+  padding:8px 12px; border-radius:8px; cursor:pointer;
+  background:#f1f5f9; color:#0f172a; font-weight:600; font-size:0.95rem;
+  border:1px solid #e2e8f0;
+  transition: background 0.3s, color 0.3s;
+}
+.tab.active { background:#1d2671; color:#fff; border-color: transparent; }
+body.dark .tab { background:#334155; color:#e2e8f0; border-color:#475569; }
+body.dark .tab.active { background:#c33764; color:#fff; }
+
+input[type="text"], input[type="password"] {
+  width:100%; padding:10px 12px; border-radius:8px;
+  border:1px solid #e6eef8;
+  margin-bottom:10px; font-size:1rem;
+}
+body.dark input { background:#0f172a; color:#e2e8f0; border:1px solid #475569; }
+
+button {
+  padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700;
+  background:#1d2671; color:#fff;
+  transition: background 0.3s;
+}
+button.secondary { background:#6b7280; }
+
+.result {
+  margin-top:14px; padding:12px; border-radius:10px; font-weight:700;
+}
+.safe { background:#e6f9ee; color:#0f5132; border:1px solid #0f5132; }
+.warn { background:#fff7e6; color:#7a4b00; border:1px solid #7a4b00; }
+.danger { background:#fdecea; color:#7a1416; border:1px solid #7a1416; }
+body.dark .safe { background:#064e3b; color:#bbf7d0; border-color:#10b981; }
+body.dark .warn { background:#78350f; color:#fcd34d; border-color:#fbbf24; }
+body.dark .danger { background:#7f1d1d; color:#fecaca; border-color:#f87171; }
+
+.note { font-size:0.875rem; color:#475569; margin-top:10px; }
+body.dark .note { color:#cbd5e1; }
+
+.footer {
+  padding:10px 20px; font-size:0.85rem;
+  color:#94a3b8; text-align:center;
+  border-top:1px solid #f1f5f9;
+}
+body.dark .footer { border-color:#334155; }
+
+/* Password strength meter */
+.strength-text {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #475569;
+}
+body.dark .strength-text { color:#cbd5e1; }
+
+.strength-bar {
+  width: 100%;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+body.dark .strength-bar { background:#334155; }
+
+.strength-bar #strength-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+#strength-hints {
+  font-size:0.85rem; color:#475569; margin-bottom:10px;
+}
+body.dark #strength-hints { color:#cbd5e1; }
+
+/* Mobile optimization */
+@media (max-width:720px) {
+  .content { flex-direction:column; }
+  .right { border-left:none; padding-left:0; }
+}
+
+@media (max-width:480px) {
+  input[type="text"], input[type="password"], button {
+    font-size: 1rem;
+    padding: 14px 16px;
+  }
+  .content {
+    gap: 16px;
+    padding: 16px;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  #theme-toggle {
+    align-self: flex-end;
+  }
+  .note, #strength-hints {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+  .strength-bar {
+    height: 12px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width:360px) {
+  .content { padding: 12px; }
+  .card { width: 95%; }
+}
